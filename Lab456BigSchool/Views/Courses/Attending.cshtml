@@ -20,7 +20,11 @@
             <div class="details">
                 <span class="lecturer">
                     @course.Lecturer.Name
-                    @if (Model.ShowAction)
+                    @if (course.IsCanceled)
+                    {
+                        <span class="label label-warning">Canceled</span>
+                    }
+                    @if (Model.ShowAction && !course.IsCanceled)
                     {
                         <button class="btn btn-default btn-sm js-toggle-follow" data-user-id="@course.LecturerId">Follow</button>
 
@@ -29,13 +33,36 @@
                 <span class="category">
                     @course.Category.Name
                 </span>
-                @if (Model.ShowAction)
-                {
-                    <Button data-course-id="@course.Id" class="btn btn-default btn-sm js-toggle-attendance">Going?</Button>
+                @*@if (Model.ShowAction)
+                    {
+                        <Button data-course-id="@course.Id" class="btn btn-default btn-sm js-toggle-attendance">Going?</Button>
 
-                }
+                    }*@
             </div>
         </li>
     }
 </ul>
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function(){
+
+            $(".js-toggle-follow").click(function(e){
+                var button = $(e.target);
+                $.post("/api/followings",{ followeeId: button.attr("data-user-id")})
+                    .done(function(){
+                        button.text("Following");
+                    })
+                    .fail(function(){
+                        alert("Bạn đã theo dõi !");
+                    });
+            });
+        });
+
+
+    </script>
+}
+
 

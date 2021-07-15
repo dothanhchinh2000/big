@@ -11,13 +11,13 @@ namespace Lab456BigSchool.ViewModels
     {
         public int Id { get; set; }
         [Required]
-        public string Place { get; set; }
+        public String Place { get; set; }
         [Required]
         [FutureDate]
-        public string Date { get; set; }
+        public String Date { get; set; }
         [Required]
         [ValidTime]
-        public string Time { get; set; }
+        public String Time { get; set; }
         [Required]
         public byte Category { get; set; }
 

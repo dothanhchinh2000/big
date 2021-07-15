@@ -51,7 +51,9 @@ namespace Lab456BigSchool.Controllers
             _dbContext.Courses.Add(course);
             _dbContext.SaveChanges();
 
-            return RedirectToAction("Index", "Home");
+
+            //add chuyeenr sang upcomingcourse
+            return RedirectToAction("Mine", "Courses");
         }
 
         [Authorize]
@@ -76,12 +78,29 @@ namespace Lab456BigSchool.Controllers
 
         }
 
+
+        [Authorize]
+        public ActionResult Following()
+        {
+            var userId = User.Identity.GetUserId();
+
+            var follow = _dbContext.Followings
+                .Where(a => a.FollowerId == userId)
+                .Select(a => a.Followee)
+                //.Include(l => l.Lecturer)
+                //.Include(l => l.Category)
+                .ToList();
+
+            return View(follow);
+        }
+
+
         [Authorize]
         public ActionResult Mine()
         {
             var userId = User.Identity.GetUserId();
             var courses = _dbContext.Courses
-                .Where(c => c.LecturerId == userId && c.DateTime > DateTime.Now)
+                .Where(c => c.LecturerId == userId && c.DateTime > DateTime.Now && !c.IsCanceled)
                 .Include(l => l.Lecturer)
                 .Include(c => c.Category)
                 .ToList();
@@ -99,7 +118,7 @@ namespace Lab456BigSchool.Controllers
             var viewmodel = new CourseViewModel
             {
                 Categories = _dbContext.Categories.ToList(),
-                Date = course.DateTime.ToString("dd/M/yyyy"),
+                Date = course.DateTime.ToString("MM/dd/yyyy"),
                 Time = course.DateTime.ToString("HH:mm"),
                 Category = course.CategoryId,
                 Place = course.Place,
@@ -127,7 +146,7 @@ namespace Lab456BigSchool.Controllers
             course.CategoryId = viewModel.Category;
             _dbContext.SaveChanges();
 
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Mine", "Courses");
         }
 
 
